@@ -329,7 +329,10 @@ int main(int argc, char *argv[])
             to = event_samp + floor(tmax*raw.info.sfreq + 0.5);
 
             if(raw.read_raw_segment(matData, timesDummy, from, to, picks)) {
-                matDataList.append(matData);
+                RowVectorXf times = timesDummy.row(0).cast<float>();
+
+                //Append and do baseline correction
+                matDataList.append(MNEMath::rescale(matData, times, QPair<QVariant,QVariant>(times(0), times(0)+abs(tmin)), "mean"));
             } else  {
                 printf("Can't read the event data segments");
             }
