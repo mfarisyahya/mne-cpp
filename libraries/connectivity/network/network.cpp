@@ -192,7 +192,7 @@ MatrixXd Network::generateConnectMat() const
         }
     }
 
-    IOUtils::write_eigen_matrix(matDist,"eigen.txt");
+    IOUtils::write_eigen_matrix(matDist,"eigenCSD3.txt");
     return matDist;
 }
 

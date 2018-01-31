@@ -75,6 +75,7 @@
 using namespace CONNECTIVITYLIB;
 using namespace Eigen;
 using namespace MNELIB;
+using namespace UTILSLIB;
 
 
 //*************************************************************************************************************
@@ -228,22 +229,22 @@ Network ConnectivityMeasures::phaseLagIndex(const MNEEpochDataList& epochDataLis
     matSignValues.setZero();
     MatrixXd matData;
 
-    for(int k = 0; k < 3; ++k) {
+    for(int k = 0; k < epochDataList.size(); ++k) {
         matData = epochDataList.at(k)->epoch;
-        QElapsedTimer elapsedTimer;
-        elapsedTimer.start();
-
+       // QElapsedTimer elapsedTimer;
+       // elapsedTimer.start();
+   // qDebug() << "epoch " <<k;
         for(int i = 0; i < rows; ++i) {
             for(int j = i; j < rows; ++j) {
                 matSignValues(i,j) += calcPhaseLagIndex(matData.row(i), matData.row(j));
             }
         }
 
-        qDebug() << "One epoch takes" << elapsedTimer.elapsed() <<" msec";
+      //  qDebug() << "One epoch takes" << elapsedTimer.elapsed() <<" msec";
     }
 
     matSignValues /= epochDataList.size();
-    matSignValues.array().abs();
+    matSignValues = matSignValues.array().abs();
 
     for(int i = 0; i < rows; ++i) {
         for(int j = i; j < rows; ++j) {
@@ -366,7 +367,10 @@ int ConnectivityMeasures::calcPhaseLagIndex(const RowVectorXd& vecFirst, const R
     //Main step of cross corr
     freqvec = freqvec.array() * freqvec2.array();
 
+
     std::complex<double> cdCSD = freqvec.mean();
+
+
 
     int iSignResult = 0.0;
     for (int i = 0; i < freqvec.cols(); i++) {
@@ -379,6 +383,7 @@ int ConnectivityMeasures::calcPhaseLagIndex(const RowVectorXd& vecFirst, const R
             iSignResult = -1.0;
         }
     }
+
     return iSignResult;
 
 
@@ -442,18 +447,18 @@ int ConnectivityMeasures::calcPhaseLagIndex(const RowVectorXd& vecFirst, const R
 //    //std::cout << phasediff << std::endl;
 
 //    //Main Phase Lag Index calculation
-//    RowVectorXd signResult(phasediff.cols());
-
+//   // RowVectorXd iSignResult(phasediff.cols());
+//    int iSignResult = 0;
 //    for (int i = 0; i < phasediff.cols(); i++) {
 //        //signum and addition of all values
 //        if (phasediff[i] > 0) {
-//            signResult[i] = 1.0;
+//            iSignResult = 1.0;
 //        } else if (phasediff[i] == 0) {
-//            signResult[i] = 0.0;
+//            iSignResult = 0.0;
 //        } else {
-//            signResult[i] = -1.0;
+//            iSignResult = -1.0;
 //        }
 //    }
 
-//    return signResult;
+//    return iSignResult;
 }
