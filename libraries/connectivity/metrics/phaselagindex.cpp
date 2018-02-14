@@ -146,11 +146,11 @@ int PhaseLagIndex::calcPhaseLagIndex(const RowVectorXd& vecFirst, const RowVecto
     int fftsize = pow(2,b);
 
     //Zero Padd
-    RowVectorXd xCorrInputVecFirst = RowVectorXd::Zero(fftsize);
-    xCorrInputVecFirst.head(vecFirst.cols()) = vecFirst;
+    RowVectorXd pLagInputVecFirst = RowVectorXd::Zero(fftsize);
+    pLagInputVecFirst.head(vecFirst.cols()) = vecFirst;
 
-    RowVectorXd xCorrInputVecSecond = RowVectorXd::Zero(fftsize);
-    xCorrInputVecSecond.head(vecSecond.cols()) = vecSecond;
+    RowVectorXd pLagInputVecSecond = RowVectorXd::Zero(fftsize);
+    pLagInputVecSecond.head(vecSecond.cols()) = vecSecond;
 
     //FFT for freq domain to both vectors
     RowVectorXcd freqvec;
@@ -165,18 +165,29 @@ int PhaseLagIndex::calcPhaseLagIndex(const RowVectorXd& vecFirst, const RowVecto
     //Main step of cross corr
     freqvec = freqvec.array() * freqvec2.array();
 
-    std::complex<double> cdCSD = freqvec.mean();
+   // std::complex<double> cdCSD = freqvec.mean();
 
-    int iSignResult = 0.0;
-    for (int i = 0; i < freqvec.cols(); i++) {
-        //signum and addition of all values
-        if (cdCSD.imag() > 0.0) {
-            iSignResult = 1.0;
-        } else if (cdCSD.imag() == 0.0) {
-            iSignResult = 0.0;
-        } else {
-            iSignResult = -1.0;
-        }
+//    int iSignResult = 0.0;
+//    for (int i = 0; i < freqvec.cols(); i++) {
+//        //signum and addition of all values
+//        if (cdCSD.imag() > 0.0) {
+//            iSignResult = 1.0;
+//        } else if (cdCSD.imag() == 0.0) {
+//            iSignResult = 0.0;
+//        } else {
+//            iSignResult = -1.0;
+//        }
+
+        int iSignResult = 0.0;
+        for (int i = 0; i < freqvec.cols(); i++) {
+            //signum and addition of all values
+            if (imag (freqvec [i]) > 0.0) {
+                iSignResult = 1.0;
+            } else if (imag (freqvec [i]) == 0.0) {
+                iSignResult = 0.0;
+            } else {
+                iSignResult = -1.0;
+            }
     }
 
     return iSignResult;
@@ -239,20 +250,21 @@ int PhaseLagIndex::calcPhaseLagIndex(const RowVectorXd& vecFirst, const RowVecto
 //    //std::cout << phasediff << std::endl;
 
 //    //Main Phase Lag Index calculation
-//    RowVectorXd signResult(phasediff.cols());
+//   // RowVectorXd iSignResult(phasediff.cols());
+//    int iSignResult =0.0;
 
 //    for (int i = 0; i < phasediff.cols(); i++) {
 //        //signum and addition of all values
 //        if (phasediff[i] > 0) {
-//            signResult[i] = 1.0;
+//            iSignResult = 1.0;
 //        } else if (phasediff[i] == 0) {
-//            signResult[i] = 0.0;
+//            iSignResult = 0.0;
 //        } else {
-//            signResult[i] = -1.0;
+//            iSignResult = -1.0;
 //        }
 //    }
 
-//    return signResult;
+//    return iSignResult;
 }
 
 
